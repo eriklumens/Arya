@@ -175,6 +175,36 @@ namespace Arya
 			string identifier;
 	};
 
+	/*class TextField : public InterfaceElement, public InputListener
+	{
+		public:
+			TextField();
+			~TextField();
+
+			void draw();
+
+			void setText();
+			string getIdentifier() const {return identifier;}
+
+			bool mouseDown(MOUSEBUTTON button, bool buttonDown, int x, int y);
+			bool mouseMoved(int x, int y, int dx, int dy);
+
+			void setActiveState(bool active);
+			bool pointIsInside(vec2 p);
+			void setSize(vec2 _size);
+			bool getMarkedForInput() const {return markedForInput;};
+			void setMarkedForInput(bool _markedForInput){ markedForInput = _markedForInput;};
+
+		private:
+			bool draggable;
+			bool dragging;
+			bool markedForInput;
+			Label* label;
+			Image* background;
+			ButtonDelegate* target;
+			string identifier;
+	};*/
+
 /////////////////////////
 // Interface
 /////////////////////////

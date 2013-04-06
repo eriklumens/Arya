@@ -14,6 +14,7 @@ namespace Arya
     class Scene;
     class Overlay;
     class Interface;
+	class SettingsManager;
 
     class Root : public Singleton<Root>, public CommandListener
     {
@@ -55,6 +56,7 @@ namespace Arya
             bool initGLEW();
             Scene* scene;
             Interface* interface;
+			SettingsManager* settingsManager;
 
             int windowWidth, windowHeight;
             int desktopWidth, desktopHeight;

@@ -3,6 +3,8 @@
 #include "common/Logger.h"
 #include "Config.h"
 #include "Commands.h"
+#include "Textures.h"
+#include "Fonts.h"
 using std::stringstream;
 using std::fstream;
 namespace Arya
@@ -379,5 +381,168 @@ namespace Arya
 		}
 		else flag = false;
 		return flag;
+	}
+
+	SettingsManager::SettingsManager()
+	{
+		Config::shared().setSettingsManager(this);
+	}
+
+	SettingsManager::~SettingsManager()
+	{
+
+	}
+
+	bool SettingsManager::init()
+	{
+		vec2 windowSize = vec2(300.0f, 200.0f);
+		settingsMenuWindow = new Arya::Window(vec2(0.0f, 0.0f), windowSize * -0.5f, windowSize, 
+				TextureManager::shared().getTexture("white"), Arya::WINDOW_DRAGGABLE, "Settings",
+				vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		controlsMenuWindow = new Arya::Window(vec2(0.0f, 0.0f), windowSize * -0.5f, windowSize, 
+				TextureManager::shared().getTexture("white"), Arya::WINDOW_DRAGGABLE, "Controls",
+				vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		graphicsMenuWindow = new Arya::Window(vec2(0.0f, 0.0f), windowSize * -0.5f, windowSize, 
+				TextureManager::shared().getTexture("white"), Arya::WINDOW_DRAGGABLE, "Graphics",
+				vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		Arya::Button* controlsButton;
+		Arya::Button* graphicsButton;
+		Arya::Button* closeButton;
+
+		Arya::Button* fullscreenButton;
+		Arya::Button* serveraddressButton;
+		Arya::Button* goingforwardgameButton;
+		Arya::Button* goingbackwardgameButton;
+		Arya::Button* rotatingleftgameButton;
+		Arya::Button* rotatingrightgameButton;
+		Arya::Button* goingleftgameButton;
+		Arya::Button* goingrightgameButton;
+		Arya::Button* goingdowngameButton;
+		Arya::Button* goingupgameButton;
+		Arya::Button* synchronizegameButton;
+		Arya::Button* backcontrolsButton;
+
+		Arya::Font* f = Arya::FontManager::shared().getFont("DejaVuSans-Bold.ttf");
+		Texture* t = TextureManager::shared().getTexture("white");
+
+		controlsButton = new Arya::Button(
+				vec2(-1.0, 1.0), vec2(10.0f, -60.0f), vec2(280.0f, 30.0f),
+				t, f, "Controls", "controlsButton",
+				this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
+				);
+		graphicsButton = new Arya::Button(
+				vec2(-1.0, 1.0), vec2(10.0f, -100.0f), vec2(280.0f, 30.0f),
+				t, f, "Graphics", "graphicsButton",
+				this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
+				);
+		closeButton = new Arya::Button(
+				vec2(-1.0, 1.0), vec2(10.0f, -140.0f), vec2(280.0f, 30.0f),
+				t, f, "Close Settings", "closeButton",
+				this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
+				);
+		settingsMenuWindow->addChild(controlsButton);
+		settingsMenuWindow->addChild(graphicsButton);
+		settingsMenuWindow->addChild(closeButton);
+
+		Arya::Button* controlButtons[12];
+		controlButtons[0] = fullscreenButton;
+		controlButtons[1] = serveraddressButton;
+		controlButtons[2] = goingforwardgameButton;
+		controlButtons[3] = goingbackwardgameButton;
+		controlButtons[4] = rotatingleftgameButton;
+		controlButtons[5] = rotatingrightgameButton;
+		controlButtons[6] = goingleftgameButton;
+		controlButtons[7] = goingrightgameButton;
+		controlButtons[8] = goingdowngameButton;
+		controlButtons[9] = goingupgameButton;
+		controlButtons[10] = synchronizegameButton;
+		controlButtons[11] = backcontrolsButton;
+		string labelControlButtons[12] = {"Fullscreen","Server address","Up","Down","Rotate left","Rotate right","Left",
+			"Right","Zoom in","Zoom out","Synchronize server", "Back"};
+		string nameControlButtons[12] = {""};
+		nameControlButtons[0] = "fullscreenButton";
+		nameControlButtons[1] = "serveraddressButton";
+		nameControlButtons[2] = "goingforwardgameButton";
+		nameControlButtons[3] = "goingbackwardgameButton";
+		nameControlButtons[4] = "rotatingleftgameButton";
+		nameControlButtons[5] = "rotatingrightgameButton";
+		nameControlButtons[6] = "goingleftgameButton";
+		nameControlButtons[7] = "goingrightgameButton";
+		nameControlButtons[8] = "goingdowngameButton";
+		nameControlButtons[9] = "goingupgameButton";
+		nameControlButtons[10] = "synchronizegameButton";
+		nameControlButtons[11] = "backcontrolsButton";
+		for(int i = 0; i < 11; i++)
+		{
+			labelControlButtons[i].append(" = ").append(Config::shared().getCvar(string(nameControlButtons[i]).substr(0,nameControlButtons[i].find_first_of('B')))->value);
+		}
+		for(int i = 0; i < 12; i++)
+		{
+			if(i < 11) controlButtons[i] = new Arya::Button(
+					vec2(-1.0, 1.0), vec2(10.0f, -60.0f - 40.0f * i), vec2(280.0f, 30.0f),
+					t, f, labelControlButtons[i], nameControlButtons[i],
+					this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
+					);
+			else controlButtons[i] = new Arya::Button(
+					vec2(-1.0, 1.0), vec2(10.0f, -80.0f - 40.0f * i), vec2(280.0f, 30.0f),
+					t, f, labelControlButtons[i], nameControlButtons[i],
+					this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
+					);
+			controlsMenuWindow->addChild(controlButtons[i]);
+		}
+		return true;
+	}
+
+	void SettingsManager::cleanup()
+	{
+
+	}
+
+	void SettingsManager::changeSetting(string setting, string value)
+	{
+		Config::shared().setCvar(setting, value, Config::shared().getCvar(setting)->type);
+	}
+
+	void SettingsManager::makeMenuActive(Window* window)
+	{
+		Arya::Interface::shared().makeActive(window);
+	}
+	
+	void SettingsManager::makeMenuInactive(Window* window)
+	{
+		Arya::Interface::shared().makeInactive(window);
+	}
+
+	void SettingsManager::buttonClicked(Arya::Button* sender)
+	{
+		if(settingsMenuWindow->getActiveState() && sender->getIdentifier() == "controlsButton") 
+		{
+			makeMenuInactive(settingsMenuWindow);
+			makeMenuActive(controlsMenuWindow);
+		}
+		else if(settingsMenuWindow->getActiveState() && sender->getIdentifier() == "graphicsButton")
+		{
+			makeMenuInactive(settingsMenuWindow);
+			makeMenuActive(graphicsMenuWindow);
+		}
+		else if(settingsMenuWindow->getActiveState() && sender->getIdentifier() == "closeButton") makeMenuInactive(settingsMenuWindow);
+
+		// controls buttons
+		else if(sender->getIdentifier() == "fullscreenButton");
+		else if(sender->getIdentifier() == "serveraddressButton");
+		else if(sender->getIdentifier() == "goingforwardgameButton");
+		else if(sender->getIdentifier() == "goingbackwardgameButton");
+		else if(sender->getIdentifier() == "rotatingleftgameButton");
+		else if(sender->getIdentifier() == "rotatingrightgameButton");
+		else if(sender->getIdentifier() == "goingleftgameButton");
+		else if(sender->getIdentifier() == "goingrightgameButton");
+		else if(sender->getIdentifier() == "goingdowngameButton");
+		else if(sender->getIdentifier() == "goingupgameButton");
+		else if(sender->getIdentifier() == "synchronizegameButton");
+		else if(sender->getIdentifier() == "backcontrolsButton")
+		{
+			makeMenuInactive(controlsMenuWindow);
+			makeMenuActive(settingsMenuWindow);
+		}
 	}
 }

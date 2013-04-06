@@ -1,6 +1,7 @@
 #pragma once
 #include "common/Singleton.h"
 #include "Files.h"
+#include "Interface.h"
 #include <string>
 #include <sstream>
 #include <map>
@@ -9,6 +10,7 @@ using std::map;
 
 namespace Arya
 {
+	class SettingsManager;
     enum ValueType
     {
         TYPE_UNKNOWN = 0,
@@ -32,6 +34,7 @@ namespace Arya
             else return false;
         }
     };
+
     class Config : public Singleton<Config>, public CommandListener
     {
         public:
@@ -51,13 +54,44 @@ namespace Arya
             void setCvarFloat(string name, float value);
             void setCvarBool(string name, bool value);
             void setConfigFile(File* file);
+			SettingsManager* getSettingsManager() const {return settingsManager;};
+			void setSettingsManager(SettingsManager* _settingsManager){settingsManager = _settingsManager;};
+			typedef map<string,cvar> cvarContainer;
+			cvarContainer getCvarList(){return cvarList;};
+
         private:
-            typedef map<string,cvar> cvarContainer;
             cvarContainer cvarList;
             bool loadConfigFileAfterRootInit(string configFileName);
             void updateConfigFile();
             File* configFile;
             bool loadConfigFile(string configFileName);
 			bool handleCommand(string command);
+			SettingsManager* settingsManager;
     };
+
+	class SettingsManager : public ButtonDelegate
+	{
+		public:
+			SettingsManager();
+			~SettingsManager();
+			bool init();
+			void cleanup();
+			void changeSetting(string setting, string value);
+			void makeMenuActive(Window* window);
+			void makeMenuInactive(Window* window);
+			Window* getSettingsMenuWindow(){return settingsMenuWindow;};
+			Window* getControlsMenuWindow(){return controlsMenuWindow;};
+			Window* getGraphicsMenuWindow(){return graphicsMenuWindow;};
+
+		private:
+			void initSettingsMenu();
+
+			Window* settingsMenuWindow;
+			Window* controlsMenuWindow;
+			Window* graphicsMenuWindow;
+
+			typedef map<string,string> nameContainer;
+			nameContainer nameList;
+			void buttonClicked(Arya::Button* sender);
+	};
 }

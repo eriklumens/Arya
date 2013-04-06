@@ -40,6 +40,7 @@ namespace Arya
         scene = 0;
         oldTime = 0;
         interface = 0;
+		settingsManager = 0;
 
         FileSystem::create();
         CommandHandler::create();
@@ -67,6 +68,7 @@ namespace Arya
         Console::destroy();
 
         if(scene) delete scene;
+		if(settingsManager) delete settingsManager;
         if(interface) delete interface;
 
         SoundManager::destroy();
@@ -116,6 +118,15 @@ namespace Arya
 		if(!interface->init())
 		{
 			LOG_INFO("Could not initialize interface");
+			return false;
+		}
+		if(!settingsManager)
+		{
+			settingsManager = new SettingsManager;
+		}
+		if(!Config::shared().getSettingsManager()->init())
+		{
+			LOG_INFO("Could not initialize the settings menu");
 			return false;
 		}
 		addFrameListener(interface);

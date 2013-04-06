@@ -76,7 +76,7 @@ void Game::run()
 
 bool Game::initMenu()
 {
-	vec2 windowSize = vec2(300.0f, 200.0f);
+	vec2 windowSize = vec2(300.0f, 240.0f);
 	menuWindow = new Arya::Window(vec2(0.0f, 0.0f), windowSize * -0.5f, windowSize, 
 			TextureManager::shared().getTexture("white"), Arya::WINDOW_DRAGGABLE, "Menu",
 			vec4(0.1f, 0.1f, 0.1f, 1.0f));
@@ -84,6 +84,7 @@ bool Game::initMenu()
 	Arya::Button* localButton;
 	Arya::Button* onlineButton;
 	Arya::Button* mapEditButton;
+	Arya::Button* settingsButton;
 	Arya::Button* quitButton;
 
 	Arya::Font* f = Arya::FontManager::shared().getFont("DejaVuSans-Bold.ttf");
@@ -110,8 +111,15 @@ bool Game::initMenu()
 			);
 	menuWindow->addChild(mapEditButton);
 
-	quitButton = new Arya::Button(
+	settingsButton = new Arya::Button(
 			vec2(-1.0, 1.0), vec2(10.0f, -180.0f), vec2(280.0f, 30.0f),
+			t, f, "Settings", "settingsButton",
+		    this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
+			);
+	menuWindow->addChild(settingsButton);
+
+	quitButton = new Arya::Button(
+			vec2(-1.0, 1.0), vec2(10.0f, -220.0f), vec2(280.0f, 30.0f),
 			t, f, "Exit Game", "quitButton",
 		    this, false, vec4(0.5f, 0.5f, 0.5f, 1.0f)
 			);
@@ -130,6 +138,10 @@ void Game::buttonClicked(Arya::Button* sender)
 		startOnlineGame();
 	else if(sender->getIdentifier() == "mapEditButton")
 		startMapEditorSession();
+	else if(sender->getIdentifier() == "settingsButton")
+	{
+		Arya::Config::shared().getSettingsManager()->makeMenuActive(Arya::Config::shared().getSettingsManager()->getSettingsMenuWindow());
+	}
 	else if(sender->getIdentifier() == "quitButton")
 		Root::shared().stopRendering();
 	
@@ -217,7 +229,16 @@ bool Game::keyDown(int key, bool keyDown)
 		case 'O': glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
 		case 'I': glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 		case GLFW_KEY_F11: Root::shared().setFullscreen(!Root::shared().getFullscreen()); break;
-		case GLFW_KEY_ESC: if(keyDown) Root::shared().stopRendering(); break;
+		case GLFW_KEY_ESC: if(!menuWindow->getActiveState() && !Config::shared().getSettingsManager()->getControlsMenuWindow()->getActiveState()
+								   && !Config::shared().getSettingsManager()->getGraphicsMenuWindow()->getActiveState()
+								   && !Config::shared().getSettingsManager()->getSettingsMenuWindow()->getActiveState()) 
+						   {
+							   if(keyDown) Arya::Interface::shared().makeActive(menuWindow); break;
+						   }
+						   else
+						   {
+							   if(keyDown) Root::shared().stopRendering(); break;	
+						   }
 		default: keyHandled = false; break;
 	}
 	return keyHandled;

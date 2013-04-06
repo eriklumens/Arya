@@ -319,10 +319,12 @@ namespace Arya
 			if(pointIsInside(vec2(x, y))) {
 				if(buttonDown) {
 					dragging = true;
+					colorMask *= 0.5f;
 					return true;
 				} else {
 					if(dragging) {
 						dragging = false;
+						colorMask *= 2.0f;
 						target->buttonClicked(this);
 						return true;
 					}

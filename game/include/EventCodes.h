@@ -79,15 +79,17 @@ typedef enum
 
     //------------------------
     // - Number of units NUM
-    // - NUM Unit IDs
-    // - NUM (vec2) positions
+    // 		- Unit ID
+	// 		- npathNodes
+	// 			- vec2 pathNodes
     //------------------------
     EVENT_MOVE_UNIT_REQUEST = 3000,
 
     //------------------------
     // - Number of units NUM
     //   - Unit ID
-    //   - (vec2) position
+	//   - npathNodes
+	//   	- (vec2) pathNodes
     //------------------------
     EVENT_MOVE_UNIT,
 
